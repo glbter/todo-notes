@@ -11,13 +11,13 @@ task: to create organizer-calendar service (RESP API) with the functionality to:
  - add user authorization (save credentials locally (in-memory for now), will move them to DB later. Considering all safety measures (do not store plain passwords wink)
  - all endpoints are closed with authorization 
  - user has his own timezone (and an API to change it)
- - all tasks have to be viewed in the user's timezone. (and created considering the user's timezone or provided timezoneони (+1 parameter)
+ - all tasks have to be viewed in the user's timezone. (and created considering the user's timezone or provided timezone (+1 parameter)
  
 3rd step:
  - add graceful shutdown
  - metrics endpoint
  - proper logs (enough information for debug without violation of security)
- - test coverega  
+ - test coverage  
  
 4th step:
  - connection to DB (Postgres)
