@@ -1,0 +1,15 @@
+services:
+  app:
+    image: todo-note
+    ports:
+      - 8080:8080
+    env_file:
+      - docker.env
+
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    env_file:
+      - docker.env

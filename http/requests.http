@@ -1,0 +1,48 @@
+###
+POST http://localhost:8080/api/v1/login
+#Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "username": "gleb",
+  "password": "123"
+}
+
+###
+POST http://localhost:8080/api/v1/users
+#Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "username": "gleb",
+  "password": "123",
+  "time_zone": "UTC+3"
+}
+
+###
+POST http://localhost:8080/api/v1/notes
+Authorization:Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjEsImV4cCI6MTYzNDEyMTQ3MiwiaWF0IjoxNjM0MTIwMjcyLCJpc3MiOiJ0b2RvIG5vdGVzIHNlcnZpY2UifQ.qkzvxwAKGH40lJK6_AFtfoP4blNSfj8UyirwqeovEZHHAZVD1810MB11OPg-ZIl7hXCPAt6ZUmkg5g8q0M5APA
+Content-Type: application/json
+
+{
+  "title": "plans for october 17",
+  "text": "text"
+}
+
+###
+PATCH http://localhost:8080/api/v1/notes/3
+Authorization:Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjEsImV4cCI6MTYzNDEyMTQ3MiwiaWF0IjoxNjM0MTIwMjcyLCJpc3MiOiJ0b2RvIG5vdGVzIHNlcnZpY2UifQ.qkzvxwAKGH40lJK6_AFtfoP4blNSfj8UyirwqeovEZHHAZVD1810MB11OPg-ZIl7hXCPAt6ZUmkg5g8q0M5APA
+Content-Type: application/json
+
+{
+  "is_finished": true
+}
+
+###
+GET http://localhost:8080/api/v1/notes
+Authorization:Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjEsImV4cCI6MTYzMzUzNDEzNCwiaWF0IjoxNjMzNTMyOTM0LCJpc3MiOiJ0b2RvIG5vdGVzIHNlcnZpY2UifQ.UJO5JjbFFsHJE5xEQXftsxdzqegTobIE8JynMEFfVQVw5BbB3cJoNCqB5MvstcQHNQgjj6XNxqG-0rRpGK9K3w
+
+
+###
+GET http://localhost:8080/api/v1/notes/1
+Authorization:Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjEsImV4cCI6MTYzMzUzNDEzNCwiaWF0IjoxNjMzNTMyOTM0LCJpc3MiOiJ0b2RvIG5vdGVzIHNlcnZpY2UifQ.UJO5JjbFFsHJE5xEQXftsxdzqegTobIE8JynMEFfVQVw5BbB3cJoNCqB5MvstcQHNQgjj6XNxqG-0rRpGK9K3w

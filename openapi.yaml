@@ -1,0 +1,460 @@
+openapi: "3.0.0"
+info:
+  version: 1.1.0
+  title: To Do List
+
+servers:
+  - url: http://localhost:8080/api/v1
+
+security:
+  - BearerAuth: []
+
+tags:
+- name: notes
+  description: todo notes
+
+- name: users
+  description: users' credentials
+
+paths:
+  /notes:
+    post:
+      tags:
+      - notes
+      operationId: addNote
+#      parameters:
+#        - $ref: "#/components/parameters/timezoneParam"
+      requestBody:
+        description: Note object
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NewNote"
+      responses: 
+        201:
+          description: Instance created
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/IdObject"
+
+
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+              
+    get: 
+      tags:
+        - notes
+      operationId: getNotes
+      parameters:
+        - in: query
+          name: start_from
+          schema:
+            type: string
+            format: date-time
+            description: format of time is RFC3339
+        - $ref: "#/components/parameters/limitParam"
+        - $ref: "#/components/parameters/offsetParam"
+        - $ref: "#/components/parameters/timezoneParam"
+        - in: query
+          name: is_finished
+          schema:
+            type: boolean         
+      responses:
+        200:
+          description: OK
+          content:
+            application/json: 
+              schema:
+                $ref: "#/components/schemas/Notes"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+  /notes/{noteId}:
+    parameters:
+      - in: path
+        name: noteId
+        required: true
+        schema:
+          $ref: "#/components/schemas/Id"
+
+    get: 
+      tags:
+        - notes
+      operationId: getNote
+      parameters:
+        - $ref: "#/components/parameters/timezoneParam"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json: 
+              schema:
+                $ref: "#/components/schemas/Note"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      tags:
+      - notes
+      operationId: updateNote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NoteUpdate"
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+    delete:
+      tags:
+        - notes
+      operationId: deleteNote
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        404:
+          $ref: "#/components/responses/NotFound"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+  /login:
+    post:
+      tags:
+        - users
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserLogin"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+
+  /users:
+    post:
+      tags:
+        - users
+      operationId: registerUser
+      security: []
+      summary: Register a new user.go
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRegistration"
+      responses:
+        201:
+          $ref: "#/components/responses/Created"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+    patch:
+      tags:
+        - users
+      operationId: updateUser
+      summary: Change user.go's time zone
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                time_zone:
+                  $ref: "#/components/schemas/TimeZone"
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        400:
+          $ref: "#/components/responses/BadRequest"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+
+    delete:
+      tags:
+        - users
+      operationId: deleteUser
+      summary: Remove user.go account
+      responses:
+        204:
+          $ref: "#/components/responses/NoContent"
+        401:
+          $ref: "#/components/responses/Unauthorized"
+        500:
+          $ref: "#/components/responses/InternalServerError"
+
+
+components:
+  schemas:
+    NewNote:
+      type: object
+      required:
+        - title
+        - text
+        - date
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+        date: 
+          type: string
+          format: date-time
+
+    Id:
+      type: integer
+      format: int64
+
+    IdObject:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+
+    Note:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          $ref: "#/components/schemas/Id"
+        title:
+          type: string
+        text:
+          type: string
+        date:
+          type: string
+          format: date-time
+        is_finished:
+          type: boolean
+          default: false
+
+    Notes:
+      type: array
+      items: 
+        $ref: "#/components/schemas/Note"
+
+
+    NoteUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        text:
+          type: string
+        date:
+          type: string
+          format: date-time
+        is_finished:
+          type: boolean
+          default: false
+
+
+    UserRegistration:
+      type: object
+      required:
+        - username
+        - password
+        - time_zone
+      properties:
+        username:
+          type: string
+        password: 
+          type: string
+          format: password
+        time_zone:
+          $ref: "#/components/schemas/TimeZone"
+
+    UserLogin:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          format: password
+
+    UserUpdate:
+      type: object
+      properties:
+        time_zone:
+          $ref: "#/components/schemas/TimeZone"
+
+    TimeZone:
+      type: string
+      enum:
+        - UTC
+        - UTC+1
+        - UTC+2
+        - UTC+3
+        - UTC+4
+        - UTC+5
+        - UTC+6
+        - UTC+7
+        - UTC+8
+        - UTC+9
+        - UTC+10
+        - UTC+11
+        - UTC+12
+        - UTC-1
+        - UTC-2
+        - UTC-3
+        - UTC-4
+        - UTC-5
+        - UTC-6
+        - UTC-7
+        - UTC-8
+        - UTC-9
+        - UTC-10
+        - UTC-11
+        - UTC-12
+
+    Token:
+      type: object
+      required:
+        - token
+        - type
+      properties:
+        token:
+          type: string
+        type:
+          type: string
+          default: "Bearer"
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+
+
+  responses:
+    OK:
+      description: Ok with a returned body
+
+    Created:
+      description: Resource created
+
+    NoContent:
+      description: No content
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    BadRequest:
+      description: Wrong body format or arguments specified
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Unauthorized:
+      description: expired token or bad token
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    InternalServerError:
+      description: Something unexpected happened
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+
+  parameters:
+    offsetParam:
+      in: query
+      name: offset 
+      schema: 
+        type: integer 
+        minimum: 0
+
+    limitParam:    
+      in: query
+      name: limit
+      schema: 
+        type: integer 
+        minimum: 10
+        maximum: 30
+
+    timezoneParam:
+      in: query
+      name: timezone
+      schema:
+        $ref: "#/components/schemas/TimeZone"
+
+
+
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+
+    BearerAuth:
+      type: http
+      scheme: bearer
